@@ -1,0 +1,50 @@
+---
+title: "Data Science with R"
+author: "Johnny"
+date: "2024-07-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Imports
+
+```{r}
+install.packages("janitor")
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+# Data Collection
+
+```{r}
+library(readr)
+df <- read_csv("datasets/train.csv")
+#View(train
+#glimpse(df)
+```
+
+# Data Cleaning
+
+```{r}
+df1 <- janitor::clean_names(df)
+
+df %>% names()
+df1 %>% names()
+```
+
+## Data Types
+
+```{r}
+str(df1)
+```
+
+```{r}
+tibble(variables = names(df1),
+       type = unlist(lapply(df1, class)))
+```
