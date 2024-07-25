@@ -18,6 +18,7 @@ install.packages("janitor")
 ```{r}
 library(tidyverse)
 library(janitor)
+library(dplyr)
 ```
 
 # Data Collection
@@ -25,8 +26,13 @@ library(janitor)
 ```{r}
 library(readr)
 df <- read_csv("datasets/train.csv")
+df_test <- read_csv("datasets/test.csv")
 #View(train
 #glimpse(df)
+```
+
+```{r}
+glimpse(df_test)
 ```
 
 # Data Cleaning
@@ -47,4 +53,37 @@ str(df1)
 ```{r}
 tibble(variables = names(df1),
        type = unlist(lapply(df1, class)))
+```
+
+## Data Cleaning pt 2
+
+```{r}
+df2 <- df1 %>% 
+  rename(days_associated = vintage,
+         health_annual_paid = annual_premium) %>% 
+  mutate(
+    across(where(is.character), tolower),
+    driving_license = ifelse(driving_license == 1, "yes", "no"),
+    previously_insured = ifelse(previously_insured == 1, "yes", "no"),
+    response = ifelse(response == 1, "yes", "no"),
+    vehicle_age = case_when(
+      vehicle_age == "< 1 year" ~ "below_1_year",
+      vehicle_age == "1-2 year" ~ "between_1_2_years",
+      vehicle_age == "> 2 years" ~ "over_2_years",
+    )
+  ) %>% 
+  mutate_if(is.character, as.factor)
+```
+
+```{r}
+# make sure yes is the first level of response
+df2$response %>% levels()
+
+df2$response <- factor(df2$response, levels = c("yes", "no"))
+
+```
+
+```{r}
+# save df2 as rds
+saveRDS(df2, "df_cleaned.rds")
 ```
